@@ -54,6 +54,7 @@ public static class BasicAPIFeatures
         BackendAPI.Register();
         AdminAPI.Register();
         UtilAPI.Register();
+        LLMAPI.Register();
     }
 
     /// <summary>Rate limiter for <see cref="Login(HttpContext, string, string)"/> to prevent spamming it, limited by IP address.</summary>
@@ -807,7 +808,7 @@ public static class BasicAPIFeatures
         return new JObject() { ["token"] = rawToken };
     }
 
-    public static HashSet<string> AcceptedAPIKeyTypes = ["stability_api", "civitai_api", "huggingface_api"];
+    public static HashSet<string> AcceptedAPIKeyTypes = ["stability_api", "civitai_api", "huggingface_api", "anthropic_api", "openai_api"];
 
     [API.APIDescription("User route to set an API key.",
         """

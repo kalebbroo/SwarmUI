@@ -108,7 +108,7 @@ public class BackendHandler
     }
 
     /// <summary>Registered core backend types.</summary>
-    public BackendType SwarmBackendType, AutoScalingBackendType, LlamaSharpBackendType, SimpleRemoteLLMBackendType;
+    public BackendType SwarmBackendType, AutoScalingBackendType, LlamaSharpBackendType, SimpleRemoteLLMBackendType, AnthropicBackendType;
 
     public BackendHandler()
     {
@@ -116,6 +116,7 @@ public class BackendHandler
         AutoScalingBackendType = RegisterBackendType<AutoScalingBackend>("autoscalingbackend", "Auto Scaling Backend", "(Advanced users only) Automatically launch other instances of SwarmUI to serve as dynamic additional backends.", true, false);
         LlamaSharpBackendType = RegisterBackendType<LlamaSharpLLMBackend>("localllama", "Local LLaMA.cpp GGUF Backend", "(EXPERIMENTAL) Same-process local LLaMA GGUF LLM support.", true, false);
         SimpleRemoteLLMBackendType = RegisterBackendType<SimpleRemoteLLMBackend>("simpleremotellm", "Remote LLM (OpenAI API)", "(EXPERIMENTAL) Support for any OpenAI API compatible LLM provider.", true, false);
+        AnthropicBackendType = RegisterBackendType<AnthropicLLMBackend>("anthropic", "Anthropic Claude", "(EXPERIMENTAL) LLM support via the Anthropic Messages API (Claude models).", true, false);
         Program.ModelRefreshEvent += () =>
         {
             List<Task> waitFor = [];

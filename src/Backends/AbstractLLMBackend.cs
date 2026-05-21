@@ -18,4 +18,11 @@ public abstract class AbstractLLMBackend : AbstractBackend
         string result = await Generate(user_input);
         takeOutput(new() { ["result"] = result });
     }
+
+    /// <summary>Lists all models available from this backend.
+    /// Backends should populate as much metadata as possible on each <see cref="LLMModelInfo"/>.</summary>
+    public virtual async Task<List<LLMModelInfo>> ListModels()
+    {
+        return [];
+    }
 }
