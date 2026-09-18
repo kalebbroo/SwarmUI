@@ -23,16 +23,19 @@ structure SwarmUI expects under `Data/Wildcards/`, so installing a pack is just 
 Copy the pack's folder into that server's `Data/Wildcards/` folder (same `Data` directory
 configured in Server Settings → Paths, wherever it lives on disk), then either:
 
-- Click the refresh icon on the gen page (it re-scans models *and* wildcards), or
-- Open the "Wildcards" tab at the bottom of the gen page (this also triggers a re-scan), or
-- Restart the server.
+- Open the "Wildcards" tab at the bottom of the gen page and click the refresh icon in that
+  panel's own header (not just opening the tab — that only re-renders whatever is already
+  cached in memory; the panel's refresh button is what re-scans disk), or
+- Restart the server (wildcards are (re)scanned on startup regardless).
 
 No rebuild or extension install is required — wildcards are just text files SwarmUI scans
-at runtime.
+at runtime. Verified live against a running server: copying `general/` into `Data/Wildcards/`,
+calling a wildcards refresh, then test-filling a prompt through every file in the pack all
+worked exactly as described above.
 
 ## Packs in this folder
 
-### `general/` — 24 files, 535 total options
+### `general/` — 24 files, 533 total options
 
 A broad, tasteful, safe-for-everyone starter set: the kind of generic attribute you'd want to
 randomize in almost *any* prompt, not tied to a specific fandom, genre, or NSFW use case.
@@ -51,7 +54,7 @@ randomize in almost *any* prompt, not tied to a specific fandom, genre, or NSFW 
 | `art_style.txt` | 30 | Art movements/styles (impressionism, cyberpunk, ukiyo-e...) |
 | `art_medium.txt` | 26 | Art mediums (oil painting, claymation, vector art...) |
 | `camera_shot.txt` | 22 | Shot framing (close-up, wide shot, bird's eye view...) |
-| `camera_angle.txt` | 14 | Camera angle (low angle, dutch angle, overhead...) |
+| `camera_angle.txt` | 12 | Camera angle (low angle, dutch angle, overhead...) |
 | `lighting.txt` | 26 | Lighting setups (golden hour, rim lighting, chiaroscuro...) |
 | `composition.txt` | 16 | Composition/framing rules (rule of thirds, leading lines...) |
 | `background.txt` | 30 | Generic settings/backdrops |
@@ -70,7 +73,7 @@ Example usage in a prompt box:
 a woman with <wildcard:general/hair_color> <wildcard:general/hair_style>, <wildcard:general/eye_color> eyes, wearing <wildcard:general/clothing_style>, <wildcard:general/art_medium>, <wildcard:general/lighting>, <wildcard:general/camera_shot>
 ```
 
-## Why 24 files / ~535 options, and not more?
+## Why 24 files / ~530 options, and not more?
 
 Community "mega packs" (Civitai's wildcard collections, the various GitHub `sd-wildcards`
 repos) run into the hundreds of files and tens of thousands of options, but that's because
@@ -87,7 +90,7 @@ the server gets by default**, that approach has real costs:
 
 **~20-30 files in the 15-45-options-each range is the sweet spot** for a default pack: enough
 variety that repeats aren't obvious in casual use, small enough that every file earns its
-place and is easy to browse. This pack lands at 24/535, deliberately on the lower-file-count,
+place and is easy to browse. This pack lands at 24/533, deliberately on the lower-file-count,
 higher-quality-per-file end of that range.
 
 Recommendation going forward: keep `general/` as the lean, curated default everyone gets, and
@@ -104,3 +107,21 @@ at a glance, and niche packs are opt-in by folder rather than diluting the defau
   are written and how the wildcard is typically substituted directly into a tag list.
 - No duplicate lines within a file, no file under 5 options (validated with a script that
   mirrors SwarmUI's own `WildcardsHelper` parsing logic before this README was written).
+
+## A note on the `general/` folder name
+
+Nesting everything under `general/` (instead of putting the 24 files at the root of
+`Data/Wildcards/`) was a judgment call, made so future theme packs (`fantasy/`, `anime/`,
+etc.) have room to exist without name clashes. The cost is that the full name is required
+in prompts, e.g. `<wildcard:general/color>` rather than `<wildcard:color>`. If you'd rather
+have short names, this is a plain folder rename (move the 24 files up a level) with no code
+changes needed.
+
+One related, verified-live behavior worth knowing: Swarm resolves a wildcard name by exact
+match first, and only if that fails, falls back to "shortest file whose full path contains
+what you typed." So a short, un-prefixed `<wildcard:color>` (no `general/`) still resolves,
+and lands on `general/color` specifically (not `general/color_palette`, `general/hair_color`,
+or `general/eye_color`, all of which also contain "color") because it's the shortest match.
+That's convenient, but it only works cleanly because `color` happens to be a prefix-free,
+shortest match among this pack's names — it's not a guarantee for every wildcard name you
+might add later, so don't rely on short names for anything you need to be unambiguous.

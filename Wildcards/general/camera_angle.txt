@@ -1,14 +1,12 @@
 eye-level angle
 low angle
+extreme low angle
 high angle
+extreme high angle
 dutch angle
 overhead angle
 ground-level angle
-tilted angle
 straight-on angle
 three-quarter angle
 side angle
 rear angle
-canted angle
-bird's-eye angle
-worm's-eye angle
