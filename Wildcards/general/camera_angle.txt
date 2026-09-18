@@ -1,0 +1,14 @@
+eye-level angle
+low angle
+high angle
+dutch angle
+overhead angle
+ground-level angle
+tilted angle
+straight-on angle
+three-quarter angle
+side angle
+rear angle
+canted angle
+bird's-eye angle
+worm's-eye angle

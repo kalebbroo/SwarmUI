@@ -1,0 +1,10 @@
+dawn
+sunrise
+early morning
+midday
+golden hour afternoon
+dusk
+sunset
+twilight
+night
+midnight

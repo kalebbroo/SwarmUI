@@ -1,0 +1,45 @@
+red
+crimson
+scarlet
+burgundy
+rose pink
+blush pink
+hot pink
+magenta
+purple
+violet
+lavender
+indigo
+navy blue
+royal blue
+sky blue
+cerulean
+turquoise
+teal
+seafoam green
+emerald green
+forest green
+olive green
+lime green
+chartreuse
+yellow
+golden yellow
+amber
+orange
+burnt orange
+coral
+terracotta
+brown
+chocolate brown
+tan
+beige
+cream
+ivory
+white
+silver
+gray
+charcoal
+black
+gold
+bronze
+copper
