@@ -264,10 +264,53 @@ class SwarmMiniMaxH3CollectReferences(io.ComfyNode):
 
         return io.NodeOutput({"ref_items": ref_items, "ref_blocks": ref_blocks})
 
+H3_IMAGE_REF_SHORT_EDGE = 1024
+H3_IMAGE_REF_VAE_MAX_SHORT_EDGE = 2048
+
+def _size_short_edge(width, height, low, high):
+    scale = min(max(min(width, height), low), high) / min(width, height)
+    return (max(H3_CANVAS_MULTIPLE, round(width * scale / H3_CANVAS_MULTIPLE) * H3_CANVAS_MULTIPLE),
+            max(H3_CANVAS_MULTIPLE, round(height * scale / H3_CANVAS_MULTIPLE) * H3_CANVAS_MULTIPLE))
+
+class SwarmMiniMaxH3ImageCollectReferences(io.ComfyNode):
+    """Collects MiniMax H3 Image reference images into MiniMaxReferences."""
+
+    @classmethod
+    def define_schema(cls):
+        return io.Schema(
+            node_id="SwarmMiniMaxH3ImageCollectReferences",
+            display_name="Swarm MiniMax H3 Image Collect References",
+            category="SwarmUI/images",
+            description="<Picture i> reference collection for MiniMax H3 Image, the first image is the picture to edit. Feed the output into SwarmTextEncodeAdvanced.",
+            inputs=[
+                io.Vae.Input("vae"),
+                io.Autogrow.Input("ref_images", optional=True, template=io.Autogrow.TemplatePrefix(input=io.Image.Input("ref_image", tooltip="Reference image (the text encoder sees it at a 1024 short edge, the VAE within a 1024-2048 short edge)"), prefix="ref_image_", min=0, max=9)),
+            ],
+            outputs=[MiniMaxReferences.Output(display_name="MiniMax References")],
+        )
+
+    @classmethod
+    def execute(cls, vae, ref_images=None) -> io.NodeOutput:
+        ref_items = []
+        ref_blocks = []
+
+        for img in (ref_images or {}).values():
+            if img is None:
+                continue
+            h, w = img.shape[1], img.shape[2]
+            qw, qh = _size_short_edge(w, h, H3_IMAGE_REF_SHORT_EDGE, H3_IMAGE_REF_SHORT_EDGE)
+            tw, th = _size_short_edge(w, h, H3_IMAGE_REF_SHORT_EDGE, H3_IMAGE_REF_VAE_MAX_SHORT_EDGE)
+            z = vae.encode(_resize(img[:1], tw, th, "disabled"))
+            ref_items.append({"type": "image", "data": _resize(img[:1], qw, qh, "disabled")})
+            ref_blocks.append({"kind": "image", "latent_h": th // 16, "latent_w": tw // 16, "latent": z})
+
+        return io.NodeOutput({"ref_items": ref_items, "ref_blocks": ref_blocks, "picture_label": "Picture %d: "})
+
 NODE_CLASS_MAPPINGS = {
     "SwarmLTXVAudioVAELoader": SwarmLTXVAudioVAELoader,
     "SwarmMiniMaxH3AddKeyframes": SwarmMiniMaxH3AddKeyframes,
     "SwarmEmptyMiniMaxH3LatentAV": SwarmEmptyMiniMaxH3LatentAV,
     "SwarmEmptyMiniMaxH3ImageLatent": SwarmEmptyMiniMaxH3ImageLatent,
     "SwarmMiniMaxH3CollectReferences": SwarmMiniMaxH3CollectReferences,
+    "SwarmMiniMaxH3ImageCollectReferences": SwarmMiniMaxH3ImageCollectReferences,
 }

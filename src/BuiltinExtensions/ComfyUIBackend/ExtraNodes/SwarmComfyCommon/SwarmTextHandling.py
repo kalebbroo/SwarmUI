@@ -72,7 +72,11 @@ class SwarmClipTextEncodeAdvanced:
             nonlocal images
             extra = {}
             if minimax_refs is not None:
-                extra["minimax_ref_items"] = minimax_refs["ref_items"]
+                if "picture_label" in minimax_refs: # MiniMax H3 Image uses plain image inputs with its own label format
+                    extra["images"] = [item["data"] for item in minimax_refs["ref_items"]]
+                    extra["picture_label"] = minimax_refs["picture_label"]
+                else:
+                    extra["minimax_ref_items"] = minimax_refs["ref_items"]
             if clip_vision_output is not None:
                 return clip.tokenize(text, llama_template=llama_template if llama_template else None, image_embeds=clip_vision_output.mm_projected, **extra)
             elif images is not None:

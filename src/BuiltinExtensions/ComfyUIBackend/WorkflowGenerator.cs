@@ -2583,6 +2583,29 @@ public partial class WorkflowGenerator
                 minimaxRefs = NodePath(CreateNode("SwarmMiniMaxH3CollectReferences", refData), 0);
             }
         }
+        else if (isPositive && IsMiniMaxH3Image())
+        {
+            JObject refData = new()
+            {
+                ["vae"] = CurrentVae.Path
+            };
+            bool hasAny = false;
+            // TODO: Warn or error if max inputs exceeded
+            for (int i = 0; i < 9; i++)
+            {
+                JArray img = GetPromptImage(false, true, i);
+                if (img is null)
+                {
+                    break;
+                }
+                hasAny = true;
+                refData[$"ref_images.ref_image_{i}"] = img;
+            }
+            if (hasAny)
+            {
+                minimaxRefs = NodePath(CreateNode("SwarmMiniMaxH3ImageCollectReferences", refData), 0);
+            }
+        }
         bool wantsSwarmCustom = Features.Contains("variation_seed") && (needsAdvancedEncode || (UserInput.TryGet(T2IParamTypes.FluxGuidanceScale, out _) && HasFluxGuidance()) || IsHunyuanVideoSkyreels() || attachImages is not null || minimaxRefs is not null);
         JArray qwenImage;
         if (IsAceStep15())
