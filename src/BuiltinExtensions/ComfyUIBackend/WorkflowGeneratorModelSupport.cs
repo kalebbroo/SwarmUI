@@ -57,6 +57,9 @@ public partial class WorkflowGenerator
     /// <summary>Returns true if the current model is MiniMax H3.</summary>
     public bool IsMiniMaxH3() => IsModelCompatClass(T2IModelClassSorter.CompatMiniMaxH3);
 
+    /// <summary>Returns true if the current model is MiniMax H3 Image.</summary>
+    public bool IsMiniMaxH3Image() => IsModelCompatClass(T2IModelClassSorter.CompatMiniMaxH3Image);
+
     /// <summary>Returns true if the current model is Black Forest Labs' Flux.1.</summary>
     public bool IsFlux() => IsModelCompatClass(T2IModelClassSorter.CompatFlux);
 
@@ -434,6 +437,15 @@ public partial class WorkflowGenerator
                 ["width"] = width
             }, id);
             return new([emptyAV, 0], this, WGNodeData.DT_LATENT_AUDIOVIDEO, CurrentCompat()) { Width = width, Height = height, Frames = frames, FPS = fps };
+        }
+        else if (IsMiniMaxH3Image())
+        {
+            return resultImage(CreateNode("SwarmEmptyMiniMaxH3ImageLatent", new JObject()
+            {
+                ["batch_size"] = batchSize,
+                ["height"] = height,
+                ["width"] = width
+            }, id));
         }
         else if (IsAceStep15()) // TODO: use VAE Family
         {
@@ -1511,6 +1523,11 @@ public partial class WorkflowGenerator
                 ["shift_audio"] = 3
             });
             LoadingModel = [shiftNode, 0];
+        }
+        else if (IsMiniMaxH3Image())
+        {
+            helpers.LoadClip("minimax", helpers.GetQwen3vl_32bMiniMaxModel());
+            helpers.DoVaeLoader(null, T2IModelClassSorter.CompatMiniMaxH3Image, "minimax-h3-image-vae");
         }
         else if (IsHunyuanVideo())
         {

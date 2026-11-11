@@ -134,6 +134,27 @@ class SwarmEmptyMiniMaxH3LatentAV(io.ComfyNode):
         latent, _ = _empty_av_latent(width, height, length)
         return io.NodeOutput(latent)
 
+class SwarmEmptyMiniMaxH3ImageLatent(io.ComfyNode):
+    @classmethod
+    def define_schema(cls):
+        return io.Schema(
+            node_id="SwarmEmptyMiniMaxH3ImageLatent",
+            display_name="Swarm Empty MiniMax H3 Image Latent",
+            category="SwarmUI/latents",
+            description="Single-frame image latent for MiniMax H3 Image.",
+            inputs=[
+                io.Int.Input("width", default=2048, min=32, max=nodes.MAX_RESOLUTION, step=32),
+                io.Int.Input("height", default=2048, min=32, max=nodes.MAX_RESOLUTION, step=32),
+                io.Int.Input("batch_size", default=1, min=1, max=4096),
+            ],
+            outputs=[io.Latent.Output()],
+        )
+
+    @classmethod
+    def execute(cls, width, height, batch_size) -> io.NodeOutput:
+        latent = torch.zeros([batch_size, 24, 1, height // 16, width // 16], device=comfy.model_management.intermediate_device())
+        return io.NodeOutput({"samples": latent})
+
 def _adapt_canvas(width, height):
     ratio = width / height
     if ratio >= 1.0:
@@ -247,5 +268,6 @@ NODE_CLASS_MAPPINGS = {
     "SwarmLTXVAudioVAELoader": SwarmLTXVAudioVAELoader,
     "SwarmMiniMaxH3AddKeyframes": SwarmMiniMaxH3AddKeyframes,
     "SwarmEmptyMiniMaxH3LatentAV": SwarmEmptyMiniMaxH3LatentAV,
+    "SwarmEmptyMiniMaxH3ImageLatent": SwarmEmptyMiniMaxH3ImageLatent,
     "SwarmMiniMaxH3CollectReferences": SwarmMiniMaxH3CollectReferences,
 }

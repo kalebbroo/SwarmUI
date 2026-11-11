@@ -1064,7 +1064,7 @@ public partial class WorkflowGenerator
             defscheduler ??= "simple";
         }
         // TODO: Registry of model default preferences instead of this
-        else if (IsFlux() || IsWanVideo() || IsWanVideo22() || IsOmniGen() || IsQwenImage() || IsQwenImage21() || IsZImage() || IsMingImage() || IsZetaChroma() || IsErnie() || IsHiDreamO1() || IsLens() || IsPixelDiT() || IsKrea2() || IsBoogu() || IsFibo2() || IsMageFlow() || IsMossImage() || IsMiniMaxMusic3() || IsSeedVR2())
+        else if (IsFlux() || IsWanVideo() || IsWanVideo22() || IsOmniGen() || IsQwenImage() || IsQwenImage21() || IsZImage() || IsMingImage() || IsZetaChroma() || IsErnie() || IsHiDreamO1() || IsLens() || IsPixelDiT() || IsKrea2() || IsBoogu() || IsFibo2() || IsMageFlow() || IsMossImage() || IsMiniMaxH3Image() || IsMiniMaxMusic3() || IsSeedVR2())
         {
             defscheduler ??= "simple";
         }
