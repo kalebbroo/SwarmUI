@@ -227,6 +227,7 @@ public class T2IModelClassSorter
         bool isMiniMaxH3Embedding(JObject h) => h.ContainsKey("qwen3vl_32b") && h.Properties().Count() < 4;
         bool isMiniMaxH3VideoVae(JObject h) => h.ContainsKey("decoder.transformer_blocks.0.scale1") && h.ContainsKey("encoder.down.5.block.0.conv1.weight");
         bool isMiniMaxH3AudioVae(JObject h) => h.ContainsKey("pre_block.attn.zero_k_bias");
+        bool isMiniMaxH3ImageVae(JObject h) => isMiniMaxH3VideoVae(h) && h.TryGetValue("decoder.x_embedder.weight", out JToken jtok) && jtok["shape"].ToArray()[0].Value<long>() == 1024;
         bool isSana(JObject h) => h.ContainsKey("attention_y_norm.weight") && h.ContainsKey("blocks.0.attn.proj.weight");
         bool isHunyuanVideo(JObject h) => h.ContainsKey("model.model.txt_in.individual_token_refiner.blocks.1.self_attn.qkv.weight") || h.ContainsKey("txt_in.individual_token_refiner.blocks.1.self_attn_qkv.weight");
         bool isHunyuanVideoSkyreelsImage2V(JObject h) => h.TryGetValue("img_in.proj.weight", out JToken jtok) && jtok["shape"].ToArray()[1].Value<long>() == 32;
@@ -798,7 +799,7 @@ public class T2IModelClassSorter
         }});
         Register(new() { ID = "minimax-h3/vae", CompatClass = CompatMiniMaxH3, Name = "MiniMax H3 Video VAE", StandardWidth = 960, StandardHeight = 960, IsThisModelOfClass = (m, h) =>
         {
-            return isMiniMaxH3VideoVae(h) && !isMiniMaxH3AudioVae(h);
+            return isMiniMaxH3VideoVae(h) && !isMiniMaxH3AudioVae(h) && !isMiniMaxH3ImageVae(h);
         }});
         Register(new() { ID = "minimax-h3/audio-vae", CompatClass = CompatMiniMaxH3, Name = "MiniMax H3 Audio VAE", StandardWidth = 960, StandardHeight = 960, IsThisModelOfClass = (m, h) =>
         {
@@ -810,7 +811,7 @@ public class T2IModelClassSorter
         }});
         Register(new() { ID = "minimax-h3-image/vae", CompatClass = CompatMiniMaxH3Image, Name = "MiniMax H3 Image VAE", StandardWidth = 2048, StandardHeight = 2048, IsThisModelOfClass = (m, h) =>
         {
-            return false;
+            return isMiniMaxH3ImageVae(h) && !isMiniMaxH3AudioVae(h);
         }});
         // ====================== Anima ======================
         Register(new() { ID = "anima", CompatClass = CompatAnima, Name = "Anima", StandardWidth = 1024, StandardHeight = 1024, IsThisModelOfClass = (m, h) =>
